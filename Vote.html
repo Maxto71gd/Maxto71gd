@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Real-Time Firebase Counter</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            padding: 20px;
+        }
+        .container {
+            text-align: center;
+            margin-top: 50px;
+        }
+        button {
+            padding: 15px 30px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 18px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+    button:disabled {
+            background-color: grey; /* Button turns grey when disabled */
+            cursor: not-allowed;
+        }
+        .counter {
+            font-size: 20px;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>Do you want to confession somaliland?</h2>
+        <button id="clickButton">click</button>
+        <div class="counter" id="counter">peaple( ........</div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        // Import the functions you need from the SDKs you need
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-app.js";
+        import { getDatabase, ref, set, get, onValue } from "https://www.gstatic.com/firebasejs/11.2.0/firebase-database.js";
+
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyAGtt9R7QmxOQUMhuvVM2Uzfko964Tc1zE",
+            authDomain: "codayn-ba582.firebaseapp.com",
+            projectId: "codayn-ba582",
+            storageBucket: "codayn-ba582.firebasestorage.app",
+            messagingSenderId: "550385809598",
+            appId: "1:550385809598:web:40c70238f19289808d86ef"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        const clickButton = document.getElementById("clickButton");
+        const counterDisplay = document.getElementById("counter");
+
+        // Function to update the counter in Firebase
+        function updateCounter() {
+            const counterRef = ref(db, 'counter');
+
+            get(counterRef).then((snapshot) => {
+                let currentValue = snapshot.val() || 0;
+                set(counterRef, currentValue + 1);
+            });
+        }
+
+        // Real-time listener to fetch the updated counter value
+        const counterRef = ref(db, 'counter');
+        onValue(counterRef, (snapshot) => {
+            const counterValue = snapshot.val();
+            counterDisplay.textContent = `people( ${counterValue} )`;
+        });
+
+        // Check if the user has already clicked
+        if (localStorage.getItem('hasClicked') === 'true') {
+            clickButton.disabled = true;
+            clickButton.textContent = 'all ready clicked';
+        }
+
+        // Event listener for button click
+        clickButton.addEventListener('click', () => {
+            // Mark that the user has clicked the button
+            localStorage.setItem('hasClicked', 'true');
+
+            // Update the Firebase counter
+            updateCounter();
+
+            // Disable the button and show a message
+            clickButton.disabled = true;
+            clickButton.textContent = 'All ready clicked';
+        });
+
+    </script>
+
+</body>
+</html>
